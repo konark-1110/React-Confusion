@@ -1,43 +1,84 @@
 import React, { Component } from "react";
 import { Card, CardImg, CardText, CardBody, CardTitle } from "reactstrap";
 
-class DishetailComponent extends Component {
+class DishDetailComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  formatDate({ date }) {
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  renderDish(dish) {
+    if (dish != null) {
+      return (
+        <Card>
+          <CardImg width="100%" src={dish.image} alt={dish.name} />
+          <CardBody>
+            <CardTitle>
+              <div>
+                <h4>{dish.name}</h4>
+              </div>
+            </CardTitle>
+            <CardText>{dish.description}</CardText>
+          </CardBody>
+        </Card>
+      );
+    } else {
+      return <div></div>;
+    }
+  }
+
   renderComments(comments) {
     if (comments != null) {
-      let options = { year: "numeric", month: "short", day: "numeric" };
-      return comments.map(comment => (
-        <ul key={comment.id} className="list-unstyled">
-          <li className="mb-2">{comment.comment}</li>
-          <li>
-            -- {comment.author}{" "}
-            {new Date(comment.date).toLocaleDateString("en-US", options)}
+      let list = comments.map((comments) => {
+        let date = comments.date;
+
+        return (
+          <li key={comments.id}>
+            <div>
+              <p>{comments.comment} </p>
+              <p>
+                {comments.author}, {this.formatDate({ date })}
+              </p>
+            </div>
           </li>
-        </ul>
-      ));
-    } else return <div />;
+        );
+      });
+
+      return (
+        <div>
+          <h4>Comments</h4>
+          <ul className="list-unstyled">{list}</ul>
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   }
 
   render() {
     const { dish } = this.props;
 
-    return (
-      <div className="row">
-        <div className="col-12 col-md-5 m-1">
-          <Card>
-            <CardImg top src={dish.image} alt={dish.name} />
-            <CardBody>
-              <CardTitle>{dish.name}</CardTitle>
-              <CardText>{dish.description}</CardText>
-            </CardBody>
-          </Card>
-        </div>
-        <div className="col-12 col-md-5 m-1">
-          <h4>Comments</h4>
-          {this.renderComments(dish.comments)}
+    return dish ? (
+      <div className="container">
+        <div className="row">
+          <div className="col-12 col-md-5 m-1">{this.renderDish(dish)}</div>
+          <div className="col-12 col-md-5 m-1">
+            {this.renderComments(dish.comments)}
+          </div>
         </div>
       </div>
+    ) : (
+      <div></div>
     );
   }
 }
 
-export default DishetailComponent;
+export default DishDetailComponent;
